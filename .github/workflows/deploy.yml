@@ -2,7 +2,7 @@ name: NodeJS with Webpack
 
 on:
   push:
-    branches: [wzrabbit-step2]
+    branches: [cyan]
 
 jobs:
   deploy:
