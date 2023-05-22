@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IdQuantity } from "../types";
 
 type UseQuantityUpdaterProps = {
@@ -21,6 +21,7 @@ const useQuantityUpdater = ({
   const [inputValue, setInputValue] = useState(initialValue.toString());
   const [isFocused, setIsFocused] = useState(false);
   const [isButtonMode, setIsButtonMode] = useState(false);
+  const firstRun = useRef(true);
 
   useEffect(() => {
     const newInputValue = Math.max(Number(inputValue), minValue);
@@ -28,19 +29,21 @@ const useQuantityUpdater = ({
   }, [isFocused, inputValue, minValue]);
 
   const updateInputValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    firstRun.current = false;
     const newInputValue = removeNonDigits(event.target.value);
     setIsFocused(() => true);
     setInputValue(() => newInputValue);
   };
 
   const incrementInputValue = (incrementValue: number) => {
+    firstRun.current = false;
     setInputValue((previousInputValue) =>
       Math.max(Number(previousInputValue) + incrementValue, minValue).toString()
     );
   };
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused || firstRun.current) {
       return;
     }
 
@@ -50,6 +53,7 @@ const useQuantityUpdater = ({
   }, [inputValue, isFocused, productId, quantityUpdateCallbacks]);
 
   const initializeInputValue = () => {
+    firstRun.current = false;
     setInputValue(() => "1");
   };
 
